@@ -370,10 +370,11 @@ describe('<FBButton4 />', () => {
  * passed; how many times a double was called; you can even create a double
  * that calls through the original method instead of replacing it outright.
  *
- * Likewise, Chai and its plugins make it easy to write concise tests and
- * make all kinds of assertations: whether a string matches a regexp, a number
- * is within range, or if a React component contains specific child nodes, to
- * name just a few examples. You'll have to read the docs to find out more!
+ * Likewise, Chai and its plugins make it easy to write concise tests and make
+ * all kinds of assertations: whether a string matches a regexp, if an array
+ * contains a specific value, or if a React component contains certain child
+ * nodes to name just a few examples. You'll have to read the docs to find
+ * out more :)
  *
  * One last thing: if you run `npm start` you can visit http://localhost:8080
  * to see all the tests in this file actually pass in the browser. Try out
