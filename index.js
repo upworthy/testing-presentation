@@ -92,13 +92,13 @@ describe('reducer', () => {
   });
 
   /**
-   * A single `describe` block often contains multiple assertations.
-   * Here we test that our action works as expected. Now we've covered
-   * all the branches of our reducer.
+   * A single `describe` block often contains multiple assertations. Here we
+   * test that our LIKE_PAGE action works as expected. Now we've covered all
+   * the branches of our reducer.
    */
   it('should set clicked = true', () => {
-    const state = { liked: false };
-    const newState = reducer(state, { type: LIKED_PAGE });
+    const oldState = { liked: false };
+    const newState = reducer(oldState, { type: LIKED_PAGE });
     expect(newState).to.eql({ liked: true });
   });
 });
@@ -107,7 +107,7 @@ describe('reducer', () => {
  * That's a little more readable. From here on out we'll use Chai.
  * Let's think about our component now. We haven't talked about
  * what the Fakebook API looks like, so how about we start with what
- * we do know: clicking the button should update our state.
+ * we do know: clicking the button should update our app state.
  *
  * But how do we test the behavior of React components?
  * Meet Enzyme. It's a project from AirBnB.
@@ -144,7 +144,7 @@ chai.use(chaiEnzyme());
 const FBButton = () => <button>Like this post on Fakebook!</button>;
 
 describe('<FBButton />', () => {
-  it('renders a component', () => {
+  it('renders a button', () => {
     const wrapper = shallow(<FBButton />);
     const html = "<button>Like this post on Fakebook!</button>";
     expect(wrapper).to.have.html(html);
@@ -153,39 +153,39 @@ describe('<FBButton />', () => {
 
 /**
  * Hmm. that's not a very useful test. For starters we're just testing that
- * React is doing its job. That's redundant. Second, if we ever updated the
- * wording on that button, our test would break.
+ * React is doing its job, which is redundant. Second, if we ever updated
+ * the wording on that button, our test would break.
  *
  * A more useful test would verify the behavior of the button. We know what
  * should happen when it's clicked, and we'd like to know if we accidentally
- * break that later.
+ * break that behavior later.
  *
  * Let's start with something easy. Since we're using react-redux, it's safe to
  * assume we'll be using `connect()` to inject our click handler into this
  * component's props as a callback.
- *
- * If this was our component:
  */
 
 const FBButton3 = ({ onClick }) =>
   <button onClick={onClick}>Like this post on Fakebook!</button>;
 
 /**
- * ...we'd then map a callback into our component's props with `connect`.
+ * Using `connect` we'd map a callback into that component's props:
  *
  *   const likePage = () => ({ type: LIKED_PAGE });
  *
  *   export default connect({ likePage })(FBButton);
  *
- * But in order to test our _connected_ component, we'd have to involve
- * react-redux in our test. It would be preferable isolate our component as
- * much as possible while testing. Think about it this way: All our basic
- * component knows is that it should accept an `onClick` prop and call it in
- * response to a click event. If a "dumb" component doesn't know or care what
- * its callbacks do, its tests don't need to care either.
+ * But in order to test our _connected_ component, we'd have to import
+ * react-redux into our test. It would be preferable isolate our component as
+ * much as possible while testing. Think about it this way: The only thing our
+ * basic, unconnected component knows is that it should accept an `onClick`
+ * prop and call it in response to a click event. If a "dumb" component
+ * doesn't care what its callbacks do or where they come from, then its tests
+ * don't need to care either.
  *
- * This separation makes it very easy to test dumb components. We can use
- * arbitrary functions to ensure our event handlers are firing.
+ * This separation makes it very easy to test dumb components. We can pass
+ * arbitrary functions as our callbacks. They don't need to be connected to
+ * app state at all.
  */
 
 describe("<FBButton3 />", () => {
@@ -200,12 +200,19 @@ describe("<FBButton3 />", () => {
 });
 
 /**
- * That's one way to do it, and there's nothing wrong with taking the simple
- * route. But let's talk about a more powerful testing tool: Test Doubles.
+ * We've already tested our reducer separately. So when we replace that
+ * generic callback with an action creator in our live code, we can be
+ * confident that everything will work as expected.
  *
- * A test double is like a stunt double for your code. It replaces an existing
- * method and records any calls to that method, so you can assert later that
- * your code was called when expected and with the arguments you expected.
+ * But sometimes we need a smarter stand-in for those callbacks. Sometimes
+ * we'll want to test that our callbacks are being passed specific parameters.
+ * Sometimes our components will expect an event handler to return a specific
+ * value, and we'll need to simulate that.
+ *
+ * Enter test doubles. A test double is like a stunt double for a function.
+ * It can replace an existing function and records any calls to it, so that
+ * you can validate that your code was called when expected and with the
+ * right arguments.
  *
  * Sinon is our test double library: http://sinonjs.org/
  *
@@ -256,8 +263,8 @@ describe("<FBButton3 /> with a test double", () => {
  * Test doubles to the rescue.
  *
  * In addition to a bare `stub()`, we can stub an existing method. In this
- * case, we want to stub out `FB.like()` so that our tests don't talk to FB
- * at all.
+ * case, we want to stub out `FB.like()` so that our tests don't make a real
+ * AJAX request.
  */
 
 import FB from './fakebook';
@@ -268,22 +275,18 @@ import FB from './fakebook';
  *
  */
 describe('<FBButton3 /> with a stubbed dependency', () => {
-  it("calls our test double of the original FB.like()", () => {
+  it("calls our test double instead of the original FB.like()", () => {
     /**
-     * `stub()` takes an object, and the name of the method to replace.
+     * `stub()` can also take an object, and the name of the method to replace.
      */
     stub(FB, 'like');
     const wrapper = shallow(<FBButton3 onClick={FB.like} />);
 
     wrapper.find('button').simulate('click');
-    /**
-     * Even though the "real" FB.like wasn't called, we can still assert
-     * that its stub was.
-     */
     expect(FB.like).to.have.been.called;
     /**
      * Important! when you're stubbing an existing method, ALWAYS restore it
-     * at the end of each test.
+     * as soon as you're done with the stub.
      */
     FB.like.restore();
   });
@@ -300,7 +303,8 @@ describe('<FBButton3 /> with a stubbed dependency', () => {
  *   connect({ likePage })(FBButton);
  *
  * And just like last time, this means we can pass an arbitrary function to
- * the un-connected version of this component instead of relying on Redux.
+ * the basic component. There's no need to complicate this test with app
+ * state or Redux.
  */
 
 const FBButton4 = ({ likePage }) => {
@@ -316,19 +320,20 @@ describe('<FBButton4 />', () => {
   it('will call our action because FB.like returns `true`', () => {
     /**
      * Here we'll use both a bare stub _and_ stub an existing method. The
-     * first stub lets us assert on the behavior that we expect: namely, our
-     * `likePage` action creator gets called.
+     * first stub lets us assert on our expected behavior: namely, that the
+     * `likePage` action creator is getting called.
      */
     const likePage = stub();
+    const wrapper = shallow(<FBButton4 likePage={likePage} />);
+
     /**
-     * The second double stubs out unwanted side effects: FB.like() shouldn't
-     * be hitting the network while we're testing.
+     * The second test double stubs out unwanted side effects: FB.like()
+     * shouldn't actually hit the network while we're testing. But we need
+     * it to pretend it did in order for our component to work correctly.
      */
     stub(FB, 'like').returns(true);
 
-    const wrapper = shallow(<FBButton4 likePage={likePage} />);
     wrapper.find('button').simulate('click');
-
     expect(likePage).to.have.been.called;
     FB.like.restore(); // Remember what I said about restoring doubles!
   });
@@ -339,11 +344,10 @@ describe('<FBButton4 />', () => {
      * our action creator was _not_ called.
      */
     const likePage = stub();
+    const wrapper = shallow(<FBButton4 likePage={likePage} />);
     stub(FB, 'like').returns(false);
 
-    const wrapper = shallow(<FBButton4 likePage={likePage} />);
     wrapper.find('button').simulate('click');
-
     expect(likePage).not.to.have.been.called;
     FB.like.restore(); // Seriously! Forgetting this will mess you up.
   });
@@ -352,11 +356,12 @@ describe('<FBButton4 />', () => {
 /**
  * One thing to note is that at no point during our tests did we import Redux
  * or React-Redux. However, we've fully tested our reducer and our components.
- * That's great! It means our state (model) and our components (views) are
- * well decoupled from Redux, or whatever the C might be in our MVC
- * architecture. The best piece of advice I can give you is this: if you're
- * having trouble writing a test, think about changing your code to make it
- * easier to test instead of making your test more complicated. Decoupling our
+ * That's great! It means our application is well decoupled. Our components
+ * don't need to know about app state at all.
+ *
+ * The best piece of testing advice I can give you is this: if you're having
+ * trouble writing a test, think about changing your code to make it easier to
+ * test instead of making your test more complicated. Decoupling our
  * components from app state and passing in generic callbacks definitely makes
  * testing easier, because our components end up with far fewer dependencies.
  *
