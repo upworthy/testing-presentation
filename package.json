@@ -1,0 +1,30 @@
+{
+  "name": "testing-talk",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "dependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-react-hmre": "^1.1.1",
+    "chai": "^3.5.0",
+    "chai-enzyme": "^0.6.1",
+    "enzyme": "^2.6.0",
+    "fs": "0.0.1-security",
+    "mocha-loader": "^1.0.0",
+    "react": "^15.4.1",
+    "react-addons-test-utils": "^15.4.1",
+    "react-dom": "^15.4.1",
+    "react-redux": "^4.4.6",
+    "redux": "^3.6.0",
+    "sinon": "^2.0.0-pre",
+    "sinon-chai": "^2.8.0",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
