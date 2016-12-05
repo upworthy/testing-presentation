@@ -8,15 +8,12 @@ module.exports = {
     path: __dirname,
     filename: 'bundle.js'
   },
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],
   module: {
     loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
       { test: /\.json$/, loader: "json"  }
     ]
   },
