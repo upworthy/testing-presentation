@@ -35,4 +35,14 @@ $mainColor: #333;
       border: 1px solid #333;
     }
   }
+
+  pre {
+    width: 120%;
+    font-size: 1em;
+    margin: $blockMargin -10%;
+
+    code {
+      max-height: 800px;
+    }
+  }
 }

@@ -26,25 +26,210 @@
 			<div class="slides">
         <section data-background-image="./img/test.jpg">
         </section>
-        <section>
-          <h1>Let's test<br />this mess!</h1>
-          <ul>
-            <li class="fragment"><em>How</em> to test</li>
-            <li class="fragment"><em>What</em> to test</li>
-            <li class="fragment">What <em>not</em> to test</li>
-          </ul>
+
+        <section data-markdown>
+          <script type="text/template">
+            # Let's test<br />this mess!
+            - <!-- .element: class="fragment" --> _How_ to test
+            - <!-- .element: class="fragment" --> _What_ to test
+            - <!-- .element: class="fragment" --> What _not_ to test
+          </script>
         </section>
-        <section>
-          <h1>RSpec</h1>
-          <ul>
-            <li class="fragment">A test runner: <code>$ rspec spec/models/foo_spec.rb</code></li>
-            <li class="fragment">A test framework: <code>describe/it</code></li>
-            <li class="fragment">Multiple assertation styles: <code>expect/should</code></li>
-            <li class="fragment">Mocks and stubs: <code>stub/allow</code></li>
-          </ul>
-          <img class="fragment" src="./img/catsink.gif" />
+
+        <section data-markdown>
+          <script type="text/template">
+            # Rspec
+
+            - <!-- .element class="fragment" --> A test runner: `$ rspec spec/models/foo_spec.rb`
+            - <!-- .element class="fragment" --> A test framework: `describe / it`
+            - <!-- .element class="fragment" --> Multiple assertation libraries: `expect / should`
+            - <!-- .element class="fragment" --> A mocking and stubbing library: `stub / allow`
+
+            ![](./img/catsink.gif) <!-- .element class="fragment" -->
+
+            Note:
+            Those of you who have done some Rails will be familiar with RSpec.
+            We'll see that JS testing is not that different from RSpec; many of the
+            concepts are the same and a lot of the syntax is even pretty similar.
+            Let's take a look at the tools that RSpec is made up of:
+
+            - A test runner: the command-line utility that actually executes your test suite.
+            - A test framework: the library you use to actually define your tests. If you're only
+              used to RSpec, it might seem like your test runner and framework are the same thing,
+              but that doesn't have to be the case.
+            - Assertation libraries. RSpec supports several different syntaxes: we can use "should"
+              or the more modern "expect" style assertations.
+            - Mocks and stubs. Again, we can use the older "stub" or the more modern "allow", both
+              of which let us stub out dependencies or make assertations on specific method calls.
+
+           It's kind of the kitchen sink of testing.
+          </script>
         </section>
-				<section>Slide 2</section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ![](./img/heart.gif)
+
+            Note:
+            In Javascript, things tend to be a little more modular. We'll use a different package
+            for each of those things. Let's walk through an example and see where each piece plugs in.
+          </script>
+        </section>
+
+        <section>
+          <pre><code data-trim class="html">
+          <button>Like this post on Fakebook!</button>
+          </code></pre>
+
+          <script type="text/template">
+            Note:
+            Let's imagine the following feature. We'll put this button on our nugget page, and when
+            a user clicks it we'll do the following:
+
+            1. Send a LIKE request to our newest social media outlet, Fakebook.
+            1. Update the state of our JS application to record the fact that the user has liked us.
+               Maybe we'll use this knowledge to show a thank-you message, or to prevent other Fakebook
+               asks from appearing. Exactly what we'll do with this knowledge is beyond the scope of this
+               example, but we at least know that we'll want to keep track of it.
+
+            We'll assume that we're using React and Redux. And to begin, let's set up some basic application
+            state to track whether the user has liked us yet or not.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-noescape data-trim class="js">
+          const LIKED_PAGE = "LIKED_PAGE";
+          const INIT_STATE = { liked: false };
+
+          const reducer = (state = INIT_STATE, action) => {
+            switch (action.type) {
+            case LIKED_PAGE: return { liked: true };
+            default: return state;
+            }
+          };
+          </code></pre>
+
+          Note:
+          So this is our basic reducer. Our state only has one key, and the reducer only takes one action.
+          Testing this should be equally simple. And because reducers are just plain functions, we can test
+          them by simply calling them with arguments of our choosing, and asserting that the results are
+          what we expect. We don't even have to involve Redux to test this.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ## Testing tool #0: Karma.js
+
+            `$ npm start`
+
+            http://karma-runner.github.io
+
+            Note:
+            Karma is our test runner. When you do "npm test", it shells out to Karma under the hood.
+            You probably won't interact much with Karma directly, unless you're changing how our test
+            environment is set up, so I won't say too much about it.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ## Testing tool #1: Mocha.js
+
+            <pre><code data-trim class="js">
+            describe("A test", () => {
+              it("Will have at least one assertation", () => {
+                /* Test body goes here! */
+              });
+            });
+
+            describe("A bigger test", () => {
+              describe("Might be nested", () => {
+                it("Probably has multiple test cases");
+                it("Is a good idea to organize big test suites");
+              });
+            });
+            </code></pre>
+
+            http://mochajs.org/
+
+            Note:
+            Our test framework is Mocha. This is how we define our tests; when Karma runs, it just executes
+            all the Mocha tests. And a Mocha test looks a lot like an RSpec test: You can organize your tests
+            into sections using "describe", and create individual test cases with "it".
+
+            "Describe" and "it" both accept a label; this can be anything you want, but often for "describe"
+            you'll use the name of the module or component under test. "It" might be a more detailed description
+            of the specific behavior each test is exercising.
+
+            It's important to note that Mocha doesn't provide any assertation or stubbing
+            libraries. It's up to us to provide those.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          ## Testing tool #2: Chai.js
+
+          <pre><code data-noescape data-trim class="js">
+          import { expect } from 'chai';
+
+          expect(1 + 1).to.equal(2);
+          </code></pre>
+
+          http://chaijs.com/
+            Note:
+            So if Mocha doesn't provide its own assertations, what do we use for that? The answer is Chai,
+            which, like RSpec, provides a couple different syntaxes. We use the BDD-style "expect" assertation,
+            because it's most similar to RSpec.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            <pre><code data-trim class="js">
+            const LIKED_PAGE = "LIKED_PAGE";
+            const INIT_STATE = { liked: false };
+
+            const reducer = (state = INIT_STATE, action) => {
+              switch (action.type) {
+              case LIKED_PAGE: return { liked: true };
+              default: return state;
+              }
+            };
+            </code></pre>
+
+            Note:
+            So just for a refresher, here's our reducer again. And now that we have "describe", "it", and
+            "expect" we can start writing tests for it.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            <pre><code data-trim data-noescape class="js">
+            describe('reducer', () => {
+              it('should initialize with liked = false', () => {
+                const state = reducer(undefined, { type: "ANYTHING" });
+                expect(state).to.eql({ liked: false });
+              });
+
+              it('should set liked = true', () => {
+                const oldState = { liked: false };
+                const newState = reducer(oldState, { type: LIKED_PAGE });
+                expect(newState).to.eql({ liked: true });
+              });
+            });
+            </code></pre>
+
+            Note:
+            So what do we want to test here? Well, our reducer function handles to cases: creating the initial
+            state when there is none, and updating the state in response to some user action. And like we said
+            before, since this is a plain function, it should be pretty easy to test it.
+          </script>
+        </section>
 			</div>
 		</div>
 
@@ -55,6 +240,8 @@
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
+        controls: false,
+        progress: false,
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [

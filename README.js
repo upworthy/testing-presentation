@@ -96,7 +96,7 @@ describe('reducer', () => {
    * test that our LIKE_PAGE action works as expected. Now we've covered all
    * the branches of our reducer.
    */
-  it('should set clicked = true', () => {
+  it('should set liked = true', () => {
     const oldState = { liked: false };
     const newState = reducer(oldState, { type: LIKED_PAGE });
     expect(newState).to.eql({ liked: true });
