@@ -1,0 +1,38 @@
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(https://fonts.googleapis.com/css?family=Lato:400,400i,900);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:700);
+
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #ededed;
+
+$mainFont: Lato, serif;
+$linkColor: #ff5d00;
+$linkColorHover: lighten( $linkColor, 20% );
+$headingFont: "Open Sans", sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: -0.03em;
+$headingFontWeight: bold;
+$headingTextTransform: none;
+$headingColor: #333;
+$selectionBackgroundColor: #febe99;
+$mainFontSize: 30px;
+$mainColor: #333;
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+.reveal {
+  section {
+    img {
+      border: 1px solid #333;
+    }
+  }
+}
