@@ -3,7 +3,7 @@
 var webpack = require('webpack');
 
 module.exports = {
-  entry: 'mocha!./index.js',
+  entry: 'mocha!./README.js',
   output: {
     path: __dirname,
     filename: 'bundle.js'
