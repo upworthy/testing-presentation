@@ -10,7 +10,7 @@
 		<link rel="stylesheet" href="css/theme/up.css">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="plugin/prism/prism.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -77,7 +77,7 @@
         </section>
 
         <section>
-          <pre><code data-trim class="html">
+          <pre><code data-trim class="language-html">
           <button>Like this post on Fakebook!</button>
           </code></pre>
 
@@ -99,7 +99,7 @@
 
         <section data-markdown>
           <script type="text/template">
-          <pre><code data-noescape data-trim class="js">
+          <pre><code data-trim class="language-js">
           const LIKED_PAGE = "LIKED_PAGE";
           const INIT_STATE = { liked: false };
 
@@ -138,7 +138,7 @@
           <script type="text/template">
             ## Testing tool #1: Mocha.js
 
-            <pre><code data-trim class="js">
+            <pre><code data-trim class="language-js">
             describe("A test", () => {
               it("Will have at least one assertation", () => {
                 /* Test body goes here! */
@@ -173,7 +173,7 @@
           <script type="text/template">
           ## Testing tool #2: Chai.js
 
-          <pre><code data-noescape data-trim class="js">
+          <pre><code data-trim class="language-js">
           import { expect } from 'chai';
 
           expect(1 + 1).to.equal(2);
@@ -184,12 +184,15 @@
             So if Mocha doesn't provide its own assertations, what do we use for that? The answer is Chai,
             which, like RSpec, provides a couple different syntaxes. We use the BDD-style "expect" assertation,
             because it's most similar to RSpec.
+
+            And like RSpec, Chai can be extended to work with other tools. RSpec-Rails gives us helpers for
+            controller and mailer tests; we will also use some Chai plugins for things like React.
           </script>
         </section>
 
         <section data-markdown>
           <script type="text/template">
-            <pre><code data-trim class="js">
+            <pre><code data-trim class="language-js">
             const LIKED_PAGE = "LIKED_PAGE";
             const INIT_STATE = { liked: false };
 
@@ -209,7 +212,7 @@
 
         <section data-markdown>
           <script type="text/template">
-            <pre><code data-trim data-noescape class="js">
+            <pre><code data-trim class="language-js">
             describe('reducer', () => {
               it('should initialize with liked = false', () => {
                 const state = reducer(undefined, { type: "ANYTHING" });
@@ -228,7 +231,264 @@
             So what do we want to test here? Well, our reducer function handles to cases: creating the initial
             state when there is none, and updating the state in response to some user action. And like we said
             before, since this is a plain function, it should be pretty easy to test it.
+
+            In the first test case, we're simulating the initialize action that Redux usually does for us. It
+            doesn't really matter what we pass the reducer at this point; we just want to test that it returns
+            the correct default state when one isn't already instantiated.
+
+            The second test case exercises the LIKE_PAGE action that we set up for this reducer. In these two
+            tests, we've covered all the cases of our reducer.
           </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          ## Testing tool #3: Enzyme
+
+
+          <pre><code data-trim class="language-jsx">
+          import { shallow, mount } from "enzyme";
+
+          /* Won't call `componentDidMount` or render any children */
+          let wrapper = shallow( &lt;MyComponent someProp={true} /&gt; );
+
+          /* WILL call `componentDidMount` and render child tags */
+          wrapper = mount(
+            &lt;MyComponent someProp={true}&gt;
+              &lt;AnotherComponent /&gt;
+            &lt;/MyComponent&gt;
+          );
+          </code></pre>
+
+          http://airbnb.io/enzyme
+
+          Note:
+          We also know we want this button to be a React component, so let's talk about testing React.
+          AirBnB released a library called Enzyme. It can be used to create components and test their
+          markup, state, and behavior.
+
+          Most often you'll use enzyme's "shallow" method. You can think of it as sort of equivalent
+          to React.createComponent. It will instantiate a component, but just as "createComponent" will
+          return a component that you still need to mount in the DOM, "shallow" won't actually mount
+          your component either. Most of the time this is fine, but just be aware that you may find cases
+          where you need the full mount behavior, in which case you can use enzyme's "mount" method instead.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim class="language-jsx">
+          import chai from 'chai';
+          import chaiEnzyme from 'chai-enzyme';
+
+          chai.use(chaiEnzyme());
+
+          const FBButton = () => <button>Like this post on Fakebook!</button>;
+
+          describe('&lt;FBButton /&gt;', () => {
+            it('renders a button', () => {
+              const wrapper = shallow( &lt;FBButton /&gt; );
+              const html = "<button>Like this post on Fakebook!</button>";
+              expect(wrapper).to.have.html(html);
+            });
+          });
+          </code></pre>
+
+          http://github.com/producthunt/chai-enzyme
+
+          Note:
+          Earlier I mentioned that Chai can be extended with plugins, and there's a good one for Enzyme.
+          chai-enzyme gives us this "html" matcher. That said, this isn't a very useful test. For starters,
+          it's kind of just testing that React is doing its job, which is redundant. Second, if I ever
+          change the wording on this component, my test is going to break.
+
+          So this test is brittle and uninformative. A better use of my testing effort would be to verify
+          the actual behavior of the button. What happens when I click on it? That's the kind of thing
+          that I want to know when it breaks.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim class="language-jsx">
+          const FBButton = ({ onClick }) =>
+            <button onClick={onClick}>Like this post on Fakebook!</button>;
+
+          const likePage = () => ({ type: LIKED_PAGE });
+
+          export default connect({ likePage })(FBButton);
+
+          describe("&lt;FBButton />", () => {
+            it('calls this.props.onClick', () => {
+              let clicked = false;
+              const onClick = () => clicked = true;
+              const wrapper = shallow( &lt;FBButton onClick={onClick} /> );
+
+              wrapper.find('button').simulate('click');
+              expect(clicked).to.be.true;
+            });
+          });
+          </code></pre>
+
+          Note:
+          Because we're using react and redux, we can assume we'll be using "connect" to inject our
+          action creators into our component props.
+
+          But that doesn't mean our test needs to use redux. Think about it this way: if our component
+          is decoupled from app state and doesn't know or care what those injected event handlers actually
+          do, then our test doesn't need to know either.
+
+          So we can pass our unconnected component any generic function and as long as we can test
+          that it was in fact called, our tests don't need to think about application state at all.
+          And because we've already tested our reducer separately, when we replace this generic
+          callback with an actual action creator, we can be confident that everything is going to work.
+
+          (By the way, "simulate" is another chai-enzyme matcher.)
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          ## Testing tool #4: Sinon.js
+
+          <pre><code data-trim class="language-jsx">
+          import { stub } from 'sinon';
+          import sinonChai from 'sinon-chai';
+          chai.use(sinonChai);
+
+          describe("test doubles", () => {
+            it('calls this.props.onClick', () => {
+              const onClick = stub();
+              const wrapper = shallow(&lt;FBButton onClick={onClick} />);
+
+              wrapper.find('button').simulate('click');
+              expect(onClick).to.have.been.called;
+            });
+          });
+          </code></pre>
+
+          http://sinonjs.org/
+
+          Note:
+          But sometimes we need a smarter stand-in than the one in the previous example. Maybe we want
+          to check that a function was called with certain arguments, or not called at all. Maybe the rest
+          of our code expects that event handler to return a specific value.
+
+          This is where "test doubles" come in. You might be familiar with mocks and stubs from RSpec,
+          but basically a test double is like a stunt double for your code. It stands in for the real thing,
+          but it doesn't actually perform any real work. Doubles also record all the calls that were
+          made to them, so you can verify later: were you called, what arguments were you passed, how many
+          times were you called, and so on.
+
+          So we use Sinon for our stubs, along with a chai plugin. "stub" creates a test double for us;
+          with no arguments, it just returns an empty function that records method calls.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim class="language-js">
+          import FB from 'fakebook';
+
+          const liked = FB.like(); /* makes an AJAX call to fakebook.com */
+
+          liked == true || false;
+          </code></pre>
+
+          Note:
+          Doubles can do a lot more as we'll see next, but let's take a step back and imagine our
+          Fakebook API. We'll pretend it works like this.
+
+          There's not much here, but this actually complicates our tests quite a bit. First, "Fb.like"
+          hits an external endpoint. Our tests definitely shouldn't be making ajax calls.
+
+          Second, our app needs to know if the user has liked a page or not. We don't want to update
+          app state if for instance, that ajax request failed.
+
+          So if we don't want to actually make an ajax request, but we still rely on the result of
+          an ajax call, how are we going to handle that in our tests?
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim data-noescape class="language-js">
+          import FB from './fakebook';
+
+          describe('stubbing a dependency', () => {
+            it("calls our test double instead of the original FB.like()", () => {
+              stub(FB, 'like');
+              const wrapper = shallow( &lt;FBButton onClick={FB.like} /> );
+
+              wrapper.find('button').simulate('click');
+              expect(FB.like).to.have.been.called;
+
+              FB.like.restore(); // Important!
+            });
+          });
+          </code></pre>
+
+          Note:
+          Test doubles to the rescue. In addition to the bare stub we created in the last example,
+          we can also stub out an existing method.
+
+          With FB.like stubbed out, it's safe to simulate this click event. No AJAX call will be made.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim class="language-js">
+          const FBButton = ({ likePage }) => {
+            const onClick = () => {
+              if (FB.like()) {
+                likePage();
+              }
+            }
+          }
+
+          connect({ likePage })(FBButton);
+          </code></pre>
+
+          Note:
+          We're almost there! The last thing we have to do is make sure that the call to FB.like()
+          actually succeeded before we update the application state.
+
+          And again, because we're using react-redux, we can assume that our "like page" action is
+          getting passed in via connect.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim class="language-jsx">
+          describe("&lt;FBButton />", () => {
+            it("does not update state if `FB.like()` returns false", () => {
+              const likePage = stub();
+              const wrapper = shallow( &lt;FBButton likePage={likePage} /> );
+              stub(FB, 'like').returns(false);
+
+              wrapper.find('button').simulate('click');
+              expect(likePage).not.to.have.been.called;
+              FB.like.restore(); // Seriously, forgetting to do this will mess you up.
+            });
+          });
+          </code></pre>
+
+          Note:
+          We already know that we can stub an existing method. The only extra piece we need to
+          make this test pass is actually telling our stub what to return. In this case I'm
+          going to make it return false and expect my stub not to have been called, just to show
+          you a slightly different example, but in practice you may want to test the truthy case,
+          or maybe both conditionals.
+
+          This is also a good example of the two most common use cases for test doubles: 1) when
+          you want to verify that a method was or was not called in a specific way; and 2) when
+          you want to stub out some side effects that your tests don't need to deal with.
+          </script>
+        </section>
+
+        <section data-background-image="./img/portal.jpg">
         </section>
 			</div>
 		</div>
@@ -248,7 +508,7 @@
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+					{ src: 'plugin/prism/prism.js', async: true, callback: function() { Prism.highlightAll() } }
 				]
 			});
 		</script>

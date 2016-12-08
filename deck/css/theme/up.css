@@ -283,8 +283,8 @@ body {
   border: 1px solid #333; }
 
 .reveal pre {
-  width: 120%;
-  font-size: 1em;
-  margin: 20px -10%; }
+  width: 115%;
+  left: -10%;
+  font-size: 0.8em; }
   .reveal pre code {
     max-height: 800px; }

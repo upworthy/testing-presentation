@@ -37,9 +37,9 @@ $mainColor: #333;
   }
 
   pre {
-    width: 120%;
-    font-size: 1em;
-    margin: $blockMargin -10%;
+    width: 115%;
+    left: -10%;
+    font-size: 0.8em;
 
     code {
       max-height: 800px;
