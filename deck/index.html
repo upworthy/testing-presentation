@@ -466,29 +466,47 @@
             it("does not update state if `FB.like()` returns false", () => {
               const likePage = stub();
               const wrapper = shallow( &lt;FBButton likePage={likePage} /> );
-              stub(FB, 'like').returns(false);
+              stub(FB, 'like').returns(true);
 
               wrapper.find('button').simulate('click');
-              expect(likePage).not.to.have.been.called;
-              FB.like.restore(); // Seriously, forgetting to do this will mess you up.
+              expect(likePage).to.have.been.called;
+              FB.like.restore(); // Seriously, don't forget to do this.
             });
           });
           </code></pre>
 
           Note:
           We already know that we can stub an existing method. The only extra piece we need to
-          make this test pass is actually telling our stub what to return. In this case I'm
-          going to make it return false and expect my stub not to have been called, just to show
-          you a slightly different example, but in practice you may want to test the truthy case,
-          or maybe both conditionals.
+          make this test pass is actually telling our stub what to return. That way our stub
+          behaves like the real thing, but we know it's safe to call and the rest of the code can
+          still expect a proper return value.
 
-          This is also a good example of the two most common use cases for test doubles: 1) when
-          you want to verify that a method was or was not called in a specific way; and 2) when
-          you want to stub out some side effects that your tests don't need to deal with.
+          This is also a good example of the two most basic use cases for test doubles: 1) when
+          you want to verify that a method was (or was not) called in a specific way; and
+          2) when you want to stub out some side effects or dependencies to isolate your tests.
           </script>
         </section>
 
-        <section data-background-image="./img/portal.jpg">
+        <section data-markdown data-background-image="./img/portal.jpg">
+          <script type="text/template">
+          Note:
+          So that's tests in a nutshell! One thing to note is that at no point in our tests did
+          we need to require Redux or its React bindings. But our reducer and component are fully
+          tested. That's great! It means our app is well decoupled. Our components don't need to
+          know anything about app state or how it's managed.
+
+          We barely scratched the surface of what these tools can do, and I'd encourage you to
+          spend a little time looking at the docs to see what's possible. That said, if there's
+          one lesson I want to leave you with, it's this: listen to your tests. They're trying to
+          tell you something. If it's really easy to test a piece of code, that's a great sign
+          that you're doing something right. If you're having a hard time and your tests are hard
+          to write, it doesn't mean you don't understand the test tools or that they're inadequate.
+          That's a big flashing sign that says your code is too complicated. You should spend your
+          time rewriting it in a way that makes your tests easier, rather than complicating your
+          tests to match.
+
+          Slides and an executable test page are online!
+          </script>
         </section>
 			</div>
 		</div>
