@@ -438,13 +438,15 @@
 
         <section data-markdown>
           <script type="text/template">
-          <pre><code data-trim class="language-js">
+          <pre><code data-trim class="language-jsx">
           const FBButton = ({ likePage }) => {
             const onClick = () => {
               if (FB.like()) {
                 likePage();
               }
             }
+
+            return &lt;button onClick={onClick}>Like this on Fakebook!&lt;/button>;
           }
 
           connect({ likePage })(FBButton);
