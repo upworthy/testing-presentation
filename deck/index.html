@@ -62,7 +62,7 @@
             - Mocks and stubs. Again, we can use the older "stub" or the more modern "allow", both
               of which let us stub out dependencies or make assertations on specific method calls.
 
-           It's kind of the kitchen sink of testing.
+            It's kind of the kitchen sink of testing.
           </script>
         </section>
 
@@ -76,12 +76,12 @@
           </script>
         </section>
 
-        <section>
-          <pre><code data-trim class="language-html">
-          <button>Like this post on Fakebook!</button>
-          </code></pre>
-
+        <section data-markdown>
           <script type="text/template">
+            <pre><code data-trim class="language-html">
+            <button>Like this post on Fakebook!</button>
+            </code></pre>
+
             Note:
             Let's imagine the following feature. We'll put this button on our nugget page, and when
             a user clicks it we'll do the following:
@@ -228,9 +228,10 @@
             </code></pre>
 
             Note:
-            So what do we want to test here? Well, our reducer function handles to cases: creating the initial
-            state when there is none, and updating the state in response to some user action. And like we said
-            before, since this is a plain function, it should be pretty easy to test it.
+            So what do we want to test here? Well, even though our reducer only recognizes one action, it
+            actually handles two cases: creating the initial state when there is none, and updating the
+            state in response to some user action. And like we said before, since this is a plain function,
+            it should be pretty easy to test it.
 
             In the first test case, we're simulating the initialize action that Redux usually does for us. It
             doesn't really matter what we pass the reducer at this point; we just want to test that it returns
@@ -342,8 +343,6 @@
           that it was in fact called, our tests don't need to think about application state at all.
           And because we've already tested our reducer separately, when we replace this generic
           callback with an actual action creator, we can be confident that everything is going to work.
-
-          (By the way, "simulate" is another chai-enzyme matcher.)
           </script>
         </section>
 
