@@ -29,7 +29,7 @@
 
         <section data-markdown>
           <script type="text/template">
-            # Let's test<br />this mess!
+            # How to Test<br />a Hot Mess
             - <!-- .element: class="fragment" --> _How_ to test
             - <!-- .element: class="fragment" --> _What_ to test
             - <!-- .element: class="fragment" --> What _not_ to test
@@ -38,7 +38,7 @@
 
         <section data-markdown>
           <script type="text/template">
-            # Rspec
+            # RSpec
 
             - <!-- .element class="fragment" --> A test runner: `$ rspec spec/models/foo_spec.rb`
             - <!-- .element class="fragment" --> A test framework: `describe / it`
@@ -412,7 +412,7 @@
 
         <section data-markdown>
           <script type="text/template">
-          <pre><code data-trim data-noescape class="language-js">
+          <pre><code data-trim data-noescape class="language-jsx">
           import FB from './fakebook';
 
           describe('stubbing a dependency', () => {
@@ -465,7 +465,7 @@
           <script type="text/template">
           <pre><code data-trim class="language-jsx">
           describe("&lt;FBButton />", () => {
-            it("does not update state if `FB.like()` returns false", () => {
+            it("updates state after `FB.like()` returns true", () => {
               const likePage = stub();
               const wrapper = shallow( &lt;FBButton likePage={likePage} /> );
               stub(FB, 'like').returns(true);
