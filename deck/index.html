@@ -78,49 +78,6 @@
 
         <section data-markdown>
           <script type="text/template">
-            <pre><code data-trim class="language-html">
-            <button>Like this post on Fakebook!</button>
-            </code></pre>
-
-            Note:
-            Let's imagine the following feature. We'll put this button on our nugget page, and when
-            a user clicks it we'll do the following:
-
-            1. Send a LIKE request to our newest social media outlet, Fakebook.
-            1. Update the state of our JS application to record the fact that the user has liked us.
-               Maybe we'll use this knowledge to show a thank-you message, or to prevent other Fakebook
-               asks from appearing. Exactly what we'll do with this knowledge is beyond the scope of this
-               example, but we at least know that we'll want to keep track of it.
-
-            We'll assume that we're using React and Redux. And to begin, let's set up some basic application
-            state to track whether the user has liked us yet or not.
-          </script>
-        </section>
-
-        <section data-markdown>
-          <script type="text/template">
-          <pre><code data-trim class="language-js">
-          const LIKED_PAGE = "LIKED_PAGE";
-          const INIT_STATE = { liked: false };
-
-          const reducer = (state = INIT_STATE, action) => {
-            switch (action.type) {
-            case LIKED_PAGE: return { liked: true };
-            default: return state;
-            }
-          };
-          </code></pre>
-
-          Note:
-          So this is our basic reducer. Our state only has one key, and the reducer only takes one action.
-          Testing this should be equally simple. And because reducers are just plain functions, we can test
-          them by simply calling them with arguments of our choosing, and asserting that the results are
-          what we expect. We don't even have to involve Redux to test this.
-          </script>
-        </section>
-
-        <section data-markdown>
-          <script type="text/template">
             ## Testing tool #0: Karma.js
 
             `$ npm start`
@@ -128,6 +85,10 @@
             http://karma-runner.github.io
 
             Note:
+            Let's start with the basics. The lowest-level parts of the stack will stay the same no
+            matter what you're testing, and there's not much that will ever change about them, or
+            the way that they're used.
+
             Karma is our test runner. When you do "npm test", it shells out to Karma under the hood.
             You probably won't interact much with Karma directly, unless you're changing how our test
             environment is set up, so I won't say too much about it.
@@ -164,8 +125,8 @@
             you'll use the name of the module or component under test. "It" might be a more detailed description
             of the specific behavior each test is exercising.
 
-            It's important to note that Mocha doesn't provide any assertation or stubbing
-            libraries. It's up to us to provide those.
+            It's important to note that unlike RSpec, Mocha doesn't provide any assertation or stubbing
+            libraries. It's up to us to provide those, as we'll see next.
           </script>
         </section>
 
@@ -181,32 +142,55 @@
 
           http://chaijs.com/
             Note:
-            So if Mocha doesn't provide its own assertations, what do we use for that? The answer is Chai,
-            which, like RSpec, provides a couple different syntaxes. We use the BDD-style "expect" assertation,
-            because it's most similar to RSpec.
+            To make assertations we use a library called Chai. Like RSpec, it provides a couple different
+            syntaxes. We use the BDD-style "expect" assertation, because it's most similar to RSpec.
 
-            And like RSpec, Chai can be extended to work with other tools. RSpec-Rails gives us helpers for
-            controller and mailer tests; we will also use some Chai plugins for things like React.
+            And like RSpec, Chai can be extended to work with other frameworks. RSpec-Rails gives us helpers
+            for controller and mailer tests; we will also use some Chai plugins for things like React.
           </script>
         </section>
 
         <section data-markdown>
           <script type="text/template">
-            <pre><code data-trim class="language-js">
-            const LIKED_PAGE = "LIKED_PAGE";
-            const INIT_STATE = { liked: false };
-
-            const reducer = (state = INIT_STATE, action) => {
-              switch (action.type) {
-              case LIKED_PAGE: return { liked: true };
-              default: return state;
-              }
-            };
+            <pre><code data-trim class="language-html">
+            <button>Like this post on Fakebook!</button>
             </code></pre>
 
             Note:
-            So just for a refresher, here's our reducer again. And now that we have "describe", "it", and
-            "expect" we can start writing tests for it.
+            Now that the plumbing is out of the way, let's look at an actual use case and talk about
+            how to test it. Imagine the following: We'll put this button on our nugget page, and when
+            a user clicks it we'll do the following.
+
+            1. Send a LIKE request to our newest social media outlet, Fakebook.
+            1. Update the state of our JS application to record the fact that the user has liked us.
+               Maybe we'll use this knowledge to show a thank-you message, or to prevent other Fakebook
+               asks from appearing. Exactly what we'll do with this knowledge is beyond the scope of this
+               example, but we at least know that we'll want to keep track of it.
+
+            We'll assume that we're using React and Redux. And to begin, let's set up some basic application
+            state to track whether the user has liked us yet or not.
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+          <pre><code data-trim class="language-js">
+          const LIKED_PAGE = "LIKED_PAGE";
+          const INIT_STATE = { liked: false };
+
+          const reducer = (state = INIT_STATE, action) => {
+            switch (action.type) {
+            case LIKED_PAGE: return { liked: true };
+            default: return state;
+            }
+          };
+          </code></pre>
+
+          Note:
+          So this is our basic reducer. Our state only has one key, and the reducer only takes one action.
+          Testing this should be equally simple. And because reducers are just plain functions, we can test
+          them by simply calling them with arguments of our choosing, and asserting that the results are
+          what we expect. We don't even have to involve Redux to test this function.
           </script>
         </section>
 
