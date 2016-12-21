@@ -29,7 +29,7 @@
 
         <section data-markdown>
           <script type="text/template">
-            # How to Test<br />a Hot Mess
+            ## ✨🔮🍕 TESTING 🔥💯👻
             - <!-- .element: class="fragment" --> _How_ to test
             - <!-- .element: class="fragment" --> _What_ to test
             - <!-- .element: class="fragment" --> What _not_ to test
@@ -72,7 +72,7 @@
 
             Note:
             In Javascript, things tend to be a little more modular. We'll use a different package
-            for each of those things. Let's walk through an example and see where each piece plugs in.
+            for each of those things. Let's start withthe bottom of our stack.
           </script>
         </section>
 
@@ -175,8 +175,8 @@
         <section data-markdown>
           <script type="text/template">
           <pre><code data-trim class="language-js">
-          const LIKED_PAGE = "LIKED_PAGE";
           const INIT_STATE = { liked: false };
+          const LIKED_PAGE = "LIKED_PAGE";
 
           const reducer = (state = INIT_STATE, action) => {
             switch (action.type) {
@@ -480,17 +480,16 @@
           tested. That's great! It means our app is well decoupled. Our components don't need to
           know anything about app state or how it's managed.
 
-          We barely scratched the surface of what these tools can do, and I'd encourage you to
-          spend a little time looking at the docs to see what's possible. That said, if there's
-          one lesson I want to leave you with, it's this: listen to your tests. They're trying to
-          tell you something. If it's really easy to test a piece of code, that's a great sign
-          that you're doing something right. If you're having a hard time and your tests are hard
-          to write, it doesn't mean you don't understand the test tools or that they're inadequate.
-          That's a big flashing sign that says your code is too complicated. You should spend your
-          time rewriting it in a way that makes your tests easier, rather than complicating your
-          tests to match.
+          Also: listen to your tests! They're trying to tell you something. If it's really easy to
+          test a piece of code, that's a great sign that you're doing something right. If you're
+          having a hard time and your tests are hard to write, it doesn't mean you don't understand
+          the test tools or that they're inadequate. That's a big flashing sign that says your code
+          is too complicated. You should spend your time rewriting it in a way that makes your tests
+          easier, rather than complicating your tests to match.
 
-          Slides and an executable test page are online!
+          We barely scratched the surface of what these tools can do, and I'd encourage you to
+          spend a little time looking at the docs to see what's possible. Slides and an executable
+          test page are online!
           </script>
         </section>
 			</div>
